@@ -6,6 +6,7 @@ import {
   IconQuoteFilled,
 } from '@tabler/icons-react-native';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 interface MustKnow {
   id: string;
@@ -28,8 +29,11 @@ export function MustKnowCard({
   fullWidth = false,
 }: MustKnowCardProps) {
   return (
-    <View style={[styles.mustKnowCard, fullWidth && styles.fullWidth]}>
-      <IconQuoteFilled size={42} color={Colors.light.tint} />
+    <Animated.View
+      entering={FadeInDown.duration(120).delay(200).springify()}
+      style={[styles.mustKnowCard, fullWidth && styles.fullWidth]}
+    >
+      <IconQuoteFilled size={32} color={Colors.light.tint} />
       <ThemedText type="default" style={styles.mustKnowText}>
         {mustKnow.content}
       </ThemedText>
@@ -65,16 +69,17 @@ export function MustKnowCard({
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   mustKnowCard: {
     flex: 1,
+    maxWidth: '45%',
     minWidth: '45%',
     aspectRatio: 1,
-    backgroundColor: '#FFF4F2',
+    backgroundColor: Colors.light.tint + 10,
     padding: 16,
     borderRadius: 12,
     justifyContent: 'space-between',

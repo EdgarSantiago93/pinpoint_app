@@ -1,11 +1,16 @@
 import { IconStar } from '@tabler/icons-react-native';
 import { StyleSheet, View } from 'react-native';
 
-export const renderStarIcons = (rating: number) => {
+export const renderStarIcons = ({
+  rating,
+  starSize = 16,
+}: {
+  rating: number;
+  starSize?: number;
+}) => {
   const stars = [];
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
-  const starSize = 16;
 
   for (let i = 0; i < 5; i++) {
     if (i < fullStars) {

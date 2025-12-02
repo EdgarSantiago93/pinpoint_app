@@ -9,12 +9,18 @@ const StaticMapImage = ({
   icon: iconProp,
   color,
   onPress,
+  width = '90%',
+  height = 177,
+  showIcon = true,
 }: {
   latitude: number;
   longitude: number;
   icon: string;
   color: string;
   onPress: () => void;
+  width?: number | string;
+  height?: number;
+  showIcon?: boolean;
 }) => {
   const iconData = PinIcons.find((icon) => icon.name === iconProp);
   const IconComponent = iconData?.component || PinIcons[0].component;
@@ -25,12 +31,16 @@ const StaticMapImage = ({
           source={{
             uri: buildStaticMapUrl(latitude || 0, longitude || 0),
           }}
-          style={styles.mapImage}
+          style={[
+            styles.mapImage,
+            { width: width as number, height: height as number },
+          ]}
         />
-
-        <View style={[styles.iconContainer, { backgroundColor: color }]}>
-          <IconComponent size={24} color="white" />
-        </View>
+        {showIcon ? (
+          <View style={[styles.iconContainer, { backgroundColor: color }]}>
+            <IconComponent size={24} color="white" />
+          </View>
+        ) : null}
       </View>
     </TouchableOpacity>
   );
@@ -42,7 +52,6 @@ const styles = StyleSheet.create({
     top: '50%',
     left: '50%',
     transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
-
     borderRadius: 12,
     padding: 8,
   },
@@ -53,7 +62,6 @@ const styles = StyleSheet.create({
   },
   mapImage: {
     width: '90%',
-    height: 177,
     borderRadius: 12,
     overflow: 'hidden',
   },

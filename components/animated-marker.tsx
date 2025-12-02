@@ -1,5 +1,6 @@
 import { PinIcons } from '@/components/pin-icons';
 import { NearbyPin } from '@/hooks/use-nearby-pins';
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { View } from 'react-native';
@@ -26,6 +27,7 @@ export const AnimatedPinMarker = ({
 
   useEffect(() => {
     opacityValue.value = withTiming(opacity, { duration: 200 });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   }, [opacity, opacityValue]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -34,7 +36,15 @@ export const AnimatedPinMarker = ({
 
   const handlePress = () => {
     // console.log('onPress', pin.id);
-    router.push(`/pages/pin/${pin.id}` as any);
+    router.push({
+      pathname: '/pages/pin/[id]',
+      params: {
+        id: pin.id,
+        name: pin.title,
+        latitude: pin.latitude.toString(),
+        longitude: pin.longitude.toString(),
+      },
+    } as any);
   };
   return (
     <Marker

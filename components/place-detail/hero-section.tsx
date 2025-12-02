@@ -3,28 +3,51 @@ import { StackedCarousel } from '@/components/stacked-slider/stacked-carousel';
 import { ThemedText } from '@/components/themed-text';
 import { Colors, nunito400regular } from '@/constants/theme';
 import Gallery, { GalleryRef } from '@/forked/react-native-awesome-gallery';
-import { IconArrowLeft, IconMap2, IconX } from '@tabler/icons-react-native';
+import { PinDetail } from '@/hooks/use-pin';
+import { buildStaticMapUrl } from '@/utils/utils';
+import {
+  IconBookmark,
+  IconBookmarkFilled,
+  IconMapPin,
+  IconMapPinCheck,
+  IconPinnedFilled,
+  IconX,
+} from '@tabler/icons-react-native';
+import { useAudioPlayer } from 'expo-audio';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Modal,
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 interface HeroSectionProps {
-  images?: string[];
+  images?: PinDetail['media'];
   icon?: string;
   color?: string;
+  latitude?: number;
+  longitude?: number;
+  isLoading: boolean;
 }
 
-export function HeroSection({ images = [], icon, color }: HeroSectionProps) {
+export function HeroSection({
+  isLoading,
+  images = [],
+  icon,
+  color,
+  latitude,
+  longitude,
+}: HeroSectionProps) {
+  const audioSource = require('@/assets/audio/press.wav');
+  const player = useAudioPlayer(audioSource);
+
   const { width: screenWidth } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
   const [galleryIndex, setGalleryIndex] = useState<number | null>(null);
   const galleryRef = useRef<GalleryRef>(null);
 
@@ -33,14 +56,6 @@ export function HeroSection({ images = [], icon, color }: HeroSectionProps) {
     : null;
   const IconComponent = iconData?.component || PinIcons[0].component;
 
-  // Default images if none provided
-  const defaultImages = [
-    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
-    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800',
-    'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800',
-  ];
-
-  const imageData = images.length > 0 ? images : defaultImages;
   const cardWidth = screenWidth - 12;
   const cardHeight = 280;
 
@@ -51,6 +66,11 @@ export function HeroSection({ images = [], icon, color }: HeroSectionProps) {
 
   const closeGallery = () => {
     setGalleryIndex(null);
+  };
+
+  const handlePlayAudio = () => {
+    player.seekTo(0.1);
+    player.play();
   };
 
   const renderCard = (imageUri: string, index: number) => {
@@ -64,60 +84,170 @@ export function HeroSection({ images = [], icon, color }: HeroSectionProps) {
         {/* Image counter overlay */}
         <View style={styles.imageCounter}>
           <ThemedText style={styles.imageCounterText}>
-            {index + 1}/{imageData.length}
+            {index + 1}/{images.length}
           </ThemedText>
         </View>
       </View>
     );
   };
 
+  const [isBookmark, setIsBookmark] = useState(false);
+  const [isVisited, setIsVisited] = useState(false);
+
+  const handlePress = () => {
+    handlePlayAudio();
+  };
   return (
     <View style={styles.container}>
-      <View style={[styles.heroOverlay, { paddingTop: insets.top }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.overlayButton}
+      <View
+        style={{
+          position: 'relative',
+        }}
+      >
+        <LinearGradient
+          colors={['rgba(255, 247, 240, 0.05)', Colors.light.background]}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          style={{
+            height: 90,
+            width: '100%',
+            position: 'absolute',
+            top: 0,
+            zIndex: 1000,
+          }}
+        />
+        <LinearGradient
+          colors={[
+            // 'transparent',
+            'rgba(255, 247, 240, 0.01)',
+            // Colors.light.background + 40,
+            Colors.light.background,
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={{
+            height: 50,
+            width: '100%',
+            position: 'absolute',
+            bottom: 0,
+            zIndex: 1000,
+          }}
+        />
+
+        <Image
+          source={{
+            uri: buildStaticMapUrl(latitude || 0, longitude || 0),
+          }}
+          style={{
+            width: '100%',
+            borderRadius: 12,
+            overflow: 'hidden',
+            height: 320,
+          }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
+            width: 28,
+            height: 28,
+            borderRadius: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+            backgroundColor: 'grey',
+            borderWidth: 2,
+            borderColor: 'white',
+          }}
         >
-          <IconArrowLeft
-            size={22}
-            color={Colors.light.tint}
-            strokeWidth={2.5}
-          />
-        </TouchableOpacity>
-        <View style={styles.overlayRight}>
-          <TouchableOpacity style={styles.overlayButton}>
-            <IconMap2 size={22} color={Colors.light.tint} strokeWidth={2} />
-          </TouchableOpacity>
+          <IconPinnedFilled size={12} color="white" />
         </View>
       </View>
 
-      {/* Stacked Carousel */}
-      <View style={styles.carouselContainer}>
-        <StackedCarousel
-          onImagePress={handleImagePress}
-          data={imageData}
-          renderCard={renderCard}
-          cardWidth={cardWidth}
-          cardHeight={cardHeight}
-          stackOffset={10}
-          showPaginator={imageData.length > 1}
-          paginatorVisibleDots={5}
-          paginatorDotSize={8}
-          paginatorSpacing={8}
-        />
-      </View>
+      {images.length > 0 ? (
+        <View style={styles.carouselContainer}>
+          <StackedCarousel
+            onImagePress={handleImagePress}
+            data={images.map((image) => image.url)}
+            renderCard={renderCard}
+            cardWidth={cardWidth}
+            cardHeight={cardHeight}
+            stackOffset={10}
+            showPaginator={images.length > 1}
+            paginatorVisibleDots={5}
+            paginatorDotSize={8}
+            paginatorSpacing={8}
+          />
+        </View>
+      ) : null}
 
-      {/* Icon Badge */}
-      <View
-        style={[
-          styles.iconBadge,
-          { backgroundColor: color || Colors.light.tint },
-        ]}
+      {isLoading ? (
+        <View
+          style={[styles.iconBadge, { backgroundColor: Colors.light.tint }]}
+        >
+          <Animated.View entering={FadeInDown.delay(300)}>
+            <ActivityIndicator size="small" color="white" />
+          </Animated.View>
+        </View>
+      ) : (
+        <View
+          style={[
+            styles.iconBadge,
+            { backgroundColor: color || Colors.light.tint },
+          ]}
+        >
+          <Animated.View entering={FadeInDown.delay(300)}>
+            <IconComponent size={32} color="white" />
+          </Animated.View>
+        </View>
+      )}
+
+      <Animated.View
+        style={[styles.iconSectionContainer]}
+        entering={FadeInDown.delay(400)}
       >
-        <IconComponent size={32} color="white" />
-      </View>
+        <TouchableOpacity
+          disabled={isLoading}
+          style={[
+            isLoading ? { opacity: 0.3 } : {},
+            styles.iconSectionButton,
+            {
+              backgroundColor: isBookmark
+                ? Colors.light.tint
+                : Colors.light.background,
+            },
+          ]}
+          onPress={handlePress}
+        >
+          {isBookmark ? (
+            <IconBookmarkFilled size={28} color={Colors.light.background} />
+          ) : (
+            <IconBookmark size={28} color={Colors.light.tint} />
+          )}
+        </TouchableOpacity>
 
-      {/* Gallery Modal */}
+        <TouchableOpacity
+          onPress={handlePress}
+          style={[
+            isLoading ? { opacity: 0.3 } : {},
+            styles.iconSectionButton,
+            {
+              backgroundColor: isVisited
+                ? Colors.light.tint
+                : Colors.light.background,
+            },
+          ]}
+        >
+          {isVisited ? (
+            <IconMapPinCheck size={28} color={Colors.light.background} />
+          ) : (
+            <IconMapPin size={28} color={Colors.light.tint} />
+          )}
+        </TouchableOpacity>
+      </Animated.View>
+
       <Modal
         visible={galleryIndex !== null}
         transparent
@@ -135,7 +265,7 @@ export function HeroSection({ images = [], icon, color }: HeroSectionProps) {
           {galleryIndex !== null && (
             <Gallery
               ref={galleryRef}
-              data={imageData}
+              data={images}
               initialIndex={galleryIndex}
               onIndexChange={(newIndex) => {
                 setGalleryIndex(newIndex);
@@ -143,7 +273,7 @@ export function HeroSection({ images = [], icon, color }: HeroSectionProps) {
               onSwipeToClose={closeGallery}
               renderItem={({ item, setImageDimensions }) => (
                 <Image
-                  source={{ uri: item }}
+                  source={{ uri: item.url }}
                   style={styles.galleryImage}
                   contentFit="contain"
                   onLoad={(e) => {
@@ -166,50 +296,15 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     width: '100%',
-    // height: '100%',
-    // height: 350,
-  },
-  heroOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    zIndex: 1000,
-  },
-  overlayButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 20,
-    padding: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  overlayRight: {
-    flexDirection: 'row',
-    gap: 8,
   },
   carouselContainer: {
-    // display: 'flex',
-    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    // minHeight: 400,
     overflow: 'hidden',
-    // backgroundColor: 'red',
     height: '100%',
   },
-  // carousel: {
-  //   backgroundColor: 'transparent',
-  //   paddingVertical: 0,
-  // },
+
   cardContainer: {
     flex: 1,
     width: '100%',
@@ -250,6 +345,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
+  },
+  iconSectionButton: {
+    width: 35,
+    height: 35,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+    borderWidth: 1.5,
+    borderColor: Colors.light.tint,
+  },
+  iconSectionContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 8,
+    position: 'absolute',
+    bottom: -15,
+    right: 10,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
   },
   galleryContainer: {
     flex: 1,

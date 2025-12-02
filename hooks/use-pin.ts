@@ -12,6 +12,12 @@ export interface PinDetail {
   rating?: number;
   color?: string;
   icon?: string;
+  media?: {
+    id: string;
+    url: string;
+    metadata?: string;
+    type: 'image' | 'video';
+  }[];
   locationMetadata?: {
     country?: string;
     city?: string;

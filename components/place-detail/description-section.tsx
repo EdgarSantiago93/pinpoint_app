@@ -20,7 +20,8 @@ export function DescriptionSection({ description }: DescriptionSectionProps) {
 
 const styles = StyleSheet.create({
   descriptionSection: {
-    marginBottom: 32,
+    marginBottom: 16,
+    marginTop: 16,
   },
   description: {
     fontSize: 16,
@@ -28,4 +29,3 @@ const styles = StyleSheet.create({
     fontFamily: nunito400regular,
   },
 });
-

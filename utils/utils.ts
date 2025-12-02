@@ -81,6 +81,7 @@ export function buildStaticMapUrl(lat: number, lng: number) {
   // params.push(`markers=${encodeURIComponent(marker)}`);
 
   // styles
+  params.push(`style=${encodeURIComponent('feature:poi|visibility:off')}`);
   const styleParams = mapStyle.map(toStaticStyleParam);
   params.push(...styleParams);
 

@@ -12,6 +12,7 @@ import { NunitoSans_600SemiBold } from '@expo-google-fonts/nunito-sans/600SemiBo
 import { NunitoSans_700Bold } from '@expo-google-fonts/nunito-sans/700Bold';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -38,8 +39,17 @@ export default function RootLayout() {
   });
 
   SplashScreen.setOptions({
-    duration: 1000,
+    duration: 800,
     fade: true,
+  });
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
   });
 
   return (

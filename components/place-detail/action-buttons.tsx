@@ -1,4 +1,3 @@
-import { ThemedText } from '@/components/themed-text';
 import { FlexView } from '@/components/ui/flex-view';
 import { Colors, nunito400regular } from '@/constants/theme';
 import { IconBookmark, IconCheck } from '@tabler/icons-react-native';
@@ -39,7 +38,7 @@ export function ActionButtons({
           size={24}
           color={isVisited ? Colors.light.tint : Colors.light.text}
         />
-        <ThemedText
+        {/* <ThemedText
           style={
             isVisited
               ? styles.actionButtonTextActive
@@ -48,7 +47,7 @@ export function ActionButtons({
           numberOfLines={1}
         >
           {isVisited ? 'Visitado' : 'Visitado'}
-        </ThemedText>
+        </ThemedText> */}
       </TouchableOpacity>
       <TouchableOpacity
         style={[
@@ -60,7 +59,7 @@ export function ActionButtons({
           size={24}
           color={isWishlist ? Colors.light.tint : Colors.light.text}
         />
-        <ThemedText
+        {/* <ThemedText
           style={
             isWishlist
               ? styles.actionButtonTextActive
@@ -69,7 +68,7 @@ export function ActionButtons({
           numberOfLines={1}
         >
           Wishlist
-        </ThemedText>
+        </ThemedText> */}
       </TouchableOpacity>
       {/* <TouchableOpacity
         style={[styles.actionButton, styles.actionButtonNormal]}
@@ -95,8 +94,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 64,
-    paddingVertical: 12,
+    minHeight: 50,
+    paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
     gap: 4,

@@ -31,7 +31,7 @@ const FeedTitle = ({
         size={42}
       />
       <View style={styles.headerText}>
-        <ThemedText style={styles.userAction} numberOfLines={2}>
+        <ThemedText style={styles.userAction}>
           <ThemedText style={styles.userName}>{post.user.name}</ThemedText>{' '}
           visitó{' '}
           <ThemedText style={styles.placeName}>{post.place.title}</ThemedText>{' '}
@@ -54,7 +54,7 @@ const FeedTitle = ({
           </ThemedText>
 
           <View style={styles.starsContainer}>
-            {renderStarIcons(post.place?.rating || 0)}
+            {renderStarIcons({ rating: post.place?.rating || 0 })}
             <ThemedText type="dimmed" style={styles.ratingText}>
               ({post.place?.rating})
             </ThemedText>

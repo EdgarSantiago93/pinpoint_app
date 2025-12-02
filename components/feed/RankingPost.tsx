@@ -57,7 +57,9 @@ export function RankingPost({ post, onPress, index = 0 }: RankingPostProps) {
 
   return (
     <Animated.View
-      entering={FadeInDown.delay(index * 50).duration(400).springify()}
+      entering={FadeInDown.delay(index * 50)
+        .duration(400)
+        .springify()}
       style={styles.container}
     >
       <FeedTitle post={post} onPress={onPress} />
@@ -135,7 +137,12 @@ export function RankingPost({ post, onPress, index = 0 }: RankingPostProps) {
         </View>
       </Modal>
       <View style={{ height: 12 }} />
-      <FeedFooter post={post} onPress={onPress} showVisitBadge={false} />
+      <FeedFooter
+        post={post}
+        onPress={onPress}
+        showVisitBadge={false}
+        showRating={false}
+      />
     </Animated.View>
   );
 }

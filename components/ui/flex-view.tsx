@@ -10,6 +10,7 @@ export function FlexView({
   animated = false,
   entering,
   exiting,
+  gap = 4,
 }: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -18,15 +19,16 @@ export function FlexView({
   animated?: boolean;
   entering?: EntryOrExitLayoutType;
   exiting?: EntryOrExitLayoutType;
+  gap?: number;
 }) {
   const baseStyle = useMemo(() => {
     return {
       flexDirection: 'row',
-      gap: 4,
+      gap: gap,
       alignItems: centerV ? 'center' : 'flex-start',
       justifyContent: centerH ? 'center' : 'flex-start',
     };
-  }, [centerV, centerH]);
+  }, [centerV, centerH, gap]);
   if (animated) {
     return (
       <Animated.View

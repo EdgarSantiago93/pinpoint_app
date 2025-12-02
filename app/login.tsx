@@ -167,8 +167,8 @@ export default function LoginScreen() {
               entering={FadeInDown}
             >
               <Image
-                source={require('@/assets/media/logo.png')}
-                style={{ width: 55, height: 55 }}
+                source={require('@/assets/images/logo_shadow.png')}
+                style={{ width: 65, height: 65 }}
                 contentFit="contain"
               />
               <ThemedText type="title-serif" style={{ fontSize: 42 }}>

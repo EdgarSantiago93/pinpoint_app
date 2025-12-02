@@ -25,7 +25,7 @@ type Aspect = {
   color: string;
 };
 
-const ASPECTS: Aspect[] = [
+export const ASPECTS: Aspect[] = [
   {
     id: 'food_quality',
     name: '🍽️ Calidad de la comida',
@@ -161,13 +161,26 @@ export default function AspectList({
           alignItems: 'center',
           justifyContent: 'flex-start',
           gap: 8,
+          display: 'flex',
+          width: '100%',
         }}
       >
-        <ThemedText type="subtitle">Qué fue más importante para ti?</ThemedText>
-
-        <TouchableOpacity onPress={() => setShowInfoDialog(true)}>
-          <IconInfoCircle size={22} color={colors.tint} />
-        </TouchableOpacity>
+        <View
+          style={{
+            flex: 90,
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+          }}
+        >
+          <ThemedText type="subtitle">
+            Cómo ordenarias los siguientes aspectos sobre este lugar?
+          </ThemedText>
+        </View>
+        <View style={{ flex: 10, alignItems: 'flex-end' }}>
+          <TouchableOpacity onPress={() => setShowInfoDialog(true)}>
+            <IconInfoCircle size={22} color={colors.tint} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Info Dialog Modal */}
@@ -193,7 +206,7 @@ export default function AspectList({
 
             <ThemedText style={styles.modalText}>
               Arrastra y suelta los aspectos para reordenarlos según tu opinión.
-              El número 1 será el más importante para ti.
+              El número 1 será el que consideres más relevante para este lugar.
             </ThemedText>
 
             {/* GIF - replace the URI with your actual GIF path or URL */}

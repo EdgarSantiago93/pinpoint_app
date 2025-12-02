@@ -1,3 +1,4 @@
+import { SkeletonBox } from '@/components/pageComponents/profile/skeleton';
 import { ThemedText } from '@/components/themed-text';
 import { Colors, nunito400regular } from '@/constants/theme';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -9,9 +10,10 @@ interface Tag {
 
 interface TagsSectionProps {
   tags?: Tag[];
+  isLoading: boolean;
 }
 
-export function TagsSection({ tags }: TagsSectionProps) {
+export function TagsSection({ tags, isLoading }: TagsSectionProps) {
   if (!tags || tags.length === 0) return null;
 
   return (
@@ -20,11 +22,19 @@ export function TagsSection({ tags }: TagsSectionProps) {
         Tags
       </ThemedText>
       <View style={styles.tagsContainer}>
-        {tags.map((tag) => (
-          <TouchableOpacity key={tag.id} style={styles.tagButton}>
-            <ThemedText style={styles.tagText}>{tag.value}</ThemedText>
-          </TouchableOpacity>
-        ))}
+        {isLoading ? (
+          <View style={styles.tagsContainer}>
+            <SkeletonBox height={42} width={120} borderRadius={20} />
+            <SkeletonBox height={42} width={120} borderRadius={20} />
+            <SkeletonBox height={42} width={120} borderRadius={20} />
+          </View>
+        ) : (
+          tags.map((tag) => (
+            <TouchableOpacity key={tag.id} style={styles.tagButton}>
+              <ThemedText style={styles.tagText}>{tag.value}</ThemedText>
+            </TouchableOpacity>
+          ))
+        )}
       </View>
     </View>
   );
@@ -58,4 +68,3 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
-

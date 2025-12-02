@@ -6,10 +6,19 @@ import { Colors, nunito600semibold } from '@/constants/theme';
 import { IconBookmark } from '@tabler/icons-react-native';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-const FeedFooter = ({ post, rating, showVisitBadge = true }: any) => {
+const FeedFooter = ({
+  post,
+  rating,
+  showVisitBadge = true,
+  showRating = true,
+}: any) => {
   return (
     <FlexView
-      style={{ justifyContent: 'space-between', alignItems: 'center' }}
+      style={{
+        justifyContent:
+          showVisitBadge && showRating ? 'space-between' : 'flex-end',
+        alignItems: 'center',
+      }}
       centerV
     >
       {showVisitBadge ? (
@@ -19,14 +28,14 @@ const FeedFooter = ({ post, rating, showVisitBadge = true }: any) => {
             {post.visitCount} {post.visitCount === 1 ? 'visita' : 'visitas'}
           </ThemedText>
         </View>
-      ) : (
+      ) : showRating ? (
         <View style={styles.starsContainer}>
-          {renderStarIcons(post.place?.rating || 0)}
+          {renderStarIcons({ rating: post.place?.rating || 0 })}
           <ThemedText type="dimmed" style={styles.ratingText}>
             ({post.place?.rating})
           </ThemedText>
         </View>
-      )}
+      ) : null}
 
       <TouchableOpacity>
         <IconBookmark size={24} color={Colors.light.icon} />

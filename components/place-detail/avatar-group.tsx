@@ -1,19 +1,116 @@
+import { Avatar } from '@/components/avatar';
+import { SkeletonBox } from '@/components/pageComponents/profile/skeleton';
 import { ThemedText } from '@/components/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, nunito600semibold } from '@/constants/theme';
 import { StyleSheet, View } from 'react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 
-export const AvatarGroup = () => {
+export const AvatarGroup = ({
+  visitors,
+  totalVisitors,
+  isLoading,
+}: {
+  isLoading: boolean;
+  visitors: {
+    id: string;
+    name: string;
+    avatar: string;
+  }[];
+  totalVisitors: number;
+}) => {
+  const remainingVisitors = totalVisitors - 3;
   return (
     <View style={styles.likesSection}>
-      <View style={styles.avatarContainer}>
-        {/* Mock avatars */}
-        <View style={[styles.avatar, styles.avatar1]} />
-        <View style={[styles.avatar, styles.avatar2]} />
-        <View style={[styles.avatar, styles.avatar3]} />
-      </View>
-      <ThemedText type="defaultSemiBold" style={styles.likesText}>
-        724 people love this place
-      </ThemedText>
+      {isLoading ? (
+        <>
+          <SkeletonBox
+            height={30}
+            width={30}
+            borderRadius={15}
+            style={{
+              ...styles.avatar,
+              marginLeft: 0,
+            }}
+          />
+          <SkeletonBox
+            height={30}
+            width={30}
+            borderRadius={15}
+            style={{
+              ...styles.avatar,
+              marginLeft: -9,
+            }}
+          />
+          <SkeletonBox
+            height={30}
+            width={30}
+            borderRadius={15}
+            style={{
+              ...styles.avatar,
+              marginLeft: -9,
+            }}
+          />
+        </>
+      ) : (
+        <Animated.View entering={FadeInUp.duration(120).delay(200).springify()}>
+          <View style={styles.avatarContainer}>
+            {visitors?.map((visitor, index) => (
+              <Avatar
+                key={visitor.id}
+                imageUri={visitor.avatar}
+                name={visitor.name}
+                size={30}
+                style={{
+                  ...styles.avatar,
+                  marginLeft: index > 0 ? -9 : 0,
+                }}
+              />
+            ))}
+
+            {remainingVisitors > 0 ? (
+              <View
+                style={[
+                  styles.initialsContainer,
+                  {
+                    ...styles.avatar,
+                    marginLeft: -9,
+                    width: 30,
+                    height: 30,
+                    borderRadius: 30 / 2,
+                    backgroundColor: '#E0E0E0',
+                  },
+                ]}
+              >
+                <ThemedText
+                  style={[
+                    styles.initialsText,
+                    {
+                      fontSize: 10,
+                      color: '#687076',
+                    },
+                  ]}
+                >
+                  {`+${
+                    remainingVisitors <= 999
+                      ? remainingVisitors
+                      : '+999'.toString()
+                  }`}
+                </ThemedText>
+              </View>
+            ) : null}
+          </View>
+        </Animated.View>
+      )}
+
+      {isLoading ? (
+        <SkeletonBox height={24} width={100} />
+      ) : (
+        <Animated.View entering={FadeInUp.duration(120).delay(200).springify()}>
+          <ThemedText type="defaultSemiBold" style={styles.likesText}>
+            {totalVisitors} personas han visitado este lugar
+          </ThemedText>
+        </Animated.View>
+      )}
     </View>
   );
 };
@@ -26,30 +123,27 @@ const styles = StyleSheet.create({
   },
 
   likesText: {
+    letterSpacing: -0.1,
     fontSize: 14,
   },
   avatarContainer: {
     flexDirection: 'row',
-    marginRight: 8,
   },
   avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    // borderRadius: 16,
     borderWidth: 2,
     borderColor: Colors.light.background,
-    marginLeft: -8,
   },
-  avatar1: {
-    backgroundColor: '#FF6B6B',
-    zIndex: 3,
+
+  //
+  //
+
+  initialsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  avatar2: {
-    backgroundColor: '#4ECDC4',
-    zIndex: 2,
-  },
-  avatar3: {
-    backgroundColor: '#FFE66D',
-    zIndex: 1,
+  initialsText: {
+    fontFamily: nunito600semibold,
+    fontWeight: '600',
   },
 });

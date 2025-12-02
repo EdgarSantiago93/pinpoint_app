@@ -1,8 +1,7 @@
-import { Colors } from '@/constants/theme';
+import { LoadingScreen } from '@/components/loading-screen';
 import { useAuthStore } from '@/stores/auth-store';
 import { useRouter, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -25,17 +24,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     const inAuthGroup = segments[0] === 'login';
 
-    console.log(
-      '🔵 AuthGuard - isAuthenticated:',
-      isAuthenticated,
-      'isLoading:',
-      isLoading,
-      'segments:',
-      segments,
-      'inAuthGroup:',
-      inAuthGroup
-    );
-
     if (!isAuthenticated && !inAuthGroup) {
       // Redirect to login if not authenticated
       console.log('🔵 Redirecting to /login');
@@ -49,13 +37,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   // Show loading spinner while checking auth status
   if (isLoading) {
-    return (
-      <View
-        style={[styles.container, { backgroundColor: Colors.light.background }]}
-      >
-        <ActivityIndicator size="large" color={Colors.light.tint} />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   // If not authenticated and not on login page, don't render children
@@ -67,11 +49,3 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   return <>{children}</>;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

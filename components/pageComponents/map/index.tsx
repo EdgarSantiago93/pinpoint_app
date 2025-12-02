@@ -130,8 +130,8 @@ export default function Map() {
       } else {
         setHasLocationPermission(false);
         Alert.alert(
-          'Permiso de ubicación requerido',
-          'Por favor, habilita los permisos de ubicación en tus ajustes de dispositivo para usar las características del mapa.',
+          '🧭 Permiso de ubicación',
+          'Por favor, permite el uso de ubicación en los ajustes de tu teléfono para usar la funcionalidad del mapa.',
           [{ text: 'OK' }]
         );
       }
@@ -282,7 +282,7 @@ export default function Map() {
         ]}
       >
         <Text style={styles.permissionText}>
-          Permiso de ubicación requerido para usar el mapa
+          🧭 Permiso de ubicación requerido
         </Text>
 
         <Button title="Permitir ubicación" onPress={requestPermissions} />

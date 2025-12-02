@@ -177,7 +177,6 @@ const AspectsStepComponent = ({
           </View>
         )}
 
-        {/* Add Must Input */}
         {isAddingMust && (
           <View ref={mustContainerRef} style={styles.addMustContainer}>
             <TextInput

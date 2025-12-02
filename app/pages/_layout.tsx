@@ -25,6 +25,7 @@ export default function PagesLayout() {
         <Stack.Screen name="profile" options={animationOptions as any} />
         <Stack.Screen
           name="pin/[id]"
+
           // options={{
           //   animation: 'slide_from_right',
           //   // animationDuration: 250,

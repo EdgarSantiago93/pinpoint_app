@@ -1,35 +1,37 @@
-import { AvatarGroup } from '@/components/place-detail/avatar-group';
+import { Avatar } from '@/components/avatar';
 import { ThemedText } from '@/components/themed-text';
+import { PinDetail } from '@/hooks/use-pin';
 import { StyleSheet, View } from 'react-native';
 
-interface EngagementSectionProps {
-  createdBy?: {
-    username?: string;
-  };
-}
-
-export function EngagementSection({ createdBy }: EngagementSectionProps) {
+export function EngagementSection({
+  createdBy,
+}: {
+  createdBy: PinDetail['createdBy'];
+}) {
   return (
     <View style={styles.engagementSection}>
+      <Avatar imageUri={createdBy?.avatar} name={createdBy?.name} size={24} />
       <ThemedText type="dimmed" style={styles.pinnedBy}>
-        Pinned by{' '}
-        <ThemedText type="defaultSemiBold">
-          {createdBy?.username || 'Unknown'}
+        Encontrado por{' '}
+        <ThemedText type="defaultSemiBold" style={styles.pinnedByUsername}>
+          {createdBy?.username || ''}
         </ThemedText>
       </ThemedText>
-
-      <AvatarGroup />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  pinnedByUsername: {
+    fontSize: 15,
+  },
   engagementSection: {
-    marginBottom: 24,
+    gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   pinnedBy: {
     fontSize: 14,
-    marginBottom: 12,
   },
 });
-

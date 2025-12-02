@@ -1,28 +1,10 @@
+import { ASPECTS } from '@/components/aspect-list';
+import { SkeletonBox } from '@/components/pageComponents/profile/skeleton';
 import { ThemedText } from '@/components/themed-text';
-import { Colors } from '@/constants/theme';
-import {
-  IconChefHatFilled,
-  IconMapPin,
-  IconMusic,
-  IconStar,
-  IconUsers,
-} from '@tabler/icons-react-native';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-
-// Aspect mapping for ratings
-const aspectLabels: Record<
-  string,
-  {
-    label: string;
-    Icon: React.ComponentType<{ size?: number; color?: string }>;
-  }
-> = {
-  food_quality: { label: 'Calidad de la comida', Icon: IconChefHatFilled },
-  service: { label: 'Servicio', Icon: IconUsers },
-  atmosphere: { label: 'Ambiente', Icon: IconMusic },
-  cleanliness: { label: 'Limpieza', Icon: IconMapPin },
-  value: { label: 'Precio-Calidad', Icon: IconStar },
-};
+import { FlexView } from '@/components/ui/flex-view';
+import { Colors, nunito700bold } from '@/constants/theme';
+import { StyleSheet, Text, View } from 'react-native';
+import { FadeInDown } from 'react-native-reanimated';
 
 interface AspectRating {
   aspect: string;
@@ -31,10 +13,12 @@ interface AspectRating {
 
 interface AspectRatingsSectionProps {
   aspectRatings: AspectRating[];
+  isLoading: boolean;
 }
 
 export function AspectRatingsSection({
   aspectRatings,
+  isLoading,
 }: AspectRatingsSectionProps) {
   if (aspectRatings.length === 0) return null;
 
@@ -42,54 +26,53 @@ export function AspectRatingsSection({
     <View style={styles.aspectsSection}>
       <View style={styles.aspectsHeader}>
         <ThemedText type="subtitle" style={styles.sectionTitle}>
-          Qué fue mas importante para ti?
+          Calificación general por los usuarios
         </ThemedText>
-        <TouchableOpacity>
-          <ThemedText style={styles.infoIcon}>ⓘ</ThemedText>
-        </TouchableOpacity>
       </View>
-      <View style={styles.aspectsList}>
-        {aspectRatings.map((item) => {
-          const aspectInfo = aspectLabels[item.aspect] || {
-            label: item.aspect,
-            Icon: IconStar,
-          };
-          const AspectIcon = aspectInfo.Icon;
-          return (
-            <View key={item.aspect} style={styles.aspectItem}>
-              <View style={styles.aspectIconContainer}>
-                <AspectIcon size={20} color={Colors.light.tint} />
-              </View>
-              <View style={styles.aspectContent}>
-                <View style={styles.aspectHeader}>
-                  <ThemedText
-                    type="defaultSemiBold"
-                    style={styles.aspectLabel}
-                  >
-                    {aspectInfo.label}
+
+      <ThemedText type="dimmed" style={{ fontSize: 16, marginBottom: 16 }}>
+        Las personas que han visitado este lugar, han ordenado estos aspectos de
+        la siguiente manera:
+      </ThemedText>
+      <View>
+        {isLoading
+          ? aspectRatings.map((item, index) => {
+              return (
+                <FlexView
+                  key={`skeleton-${index}`}
+                  centerV
+                  style={styles.aspectItemContainer}
+                >
+                  <View style={styles.numberItem}>
+                    <Text style={styles.numberText}>{index + 1}.</Text>
+                  </View>
+                  <SkeletonBox height={24} width={'100%'} />
+                </FlexView>
+              );
+            })
+          : aspectRatings.map((item, index) => {
+              const aspectInfo = ASPECTS.find(
+                (aspect) => aspect.id === item.aspect
+              );
+              return (
+                <FlexView
+                  animated
+                  entering={FadeInDown.duration(120)
+                    .delay(200 + index * 100)
+                    .springify()}
+                  key={item.aspect}
+                  centerV
+                  style={styles.aspectItemContainer}
+                >
+                  <View style={styles.numberItem}>
+                    <Text style={styles.numberText}>{index + 1}.</Text>
+                  </View>
+                  <ThemedText type="defaultSemiBold" style={styles.aspectLabel}>
+                    {aspectInfo?.name}
                   </ThemedText>
-                  <ThemedText
-                    type="defaultSemiBold"
-                    style={styles.aspectValue}
-                  >
-                    {item.value}%
-                  </ThemedText>
-                </View>
-                <View style={styles.progressBar}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      {
-                        width: `${item.value}%`,
-                        backgroundColor: Colors.light.tint,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
-          );
-        })}
+                </FlexView>
+              );
+            })}
       </View>
     </View>
   );
@@ -103,58 +86,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 18,
-    marginBottom: 16,
-  },
-  infoIcon: {
-    fontSize: 18,
-    color: Colors.light.icon,
-  },
-  aspectsList: {
-    gap: 16,
-  },
-  aspectItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  aspectIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#FFF4F2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexShrink: 0,
-  },
-  aspectContent: {
-    flex: 1,
-  },
-  aspectHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
   },
   aspectLabel: {
-    fontSize: 14,
+    fontSize: 16,
   },
-  aspectValue: {
-    fontSize: 14,
+  aspectItemContainer: {
+    marginBottom: 8,
+  },
+  numberItem: {
+    width: 30,
+    height: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.light.tint + 10,
+    borderRadius: 8,
+  },
+  numberText: {
+    fontSize: 18,
     color: Colors.light.tint,
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 3,
+    fontFamily: nunito700bold,
   },
 });
-

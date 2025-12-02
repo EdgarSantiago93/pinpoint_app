@@ -1,41 +1,51 @@
-import { renderStarIcons } from '@/components/place-detail/renderStarIcons';
+import {
+  renderStarIcons2,
+  SkeletonStar,
+} from '@/components/place-detail/renderStarIcons2';
 import { ThemedText } from '@/components/themed-text';
+import { FlexView } from '@/components/ui/flex-view';
 import { StyleSheet, View } from 'react-native';
 
 interface RatingSectionProps {
   rating?: number;
   reviewCount?: number;
+  isLoading?: boolean;
 }
 
-export function RatingSection({ rating, reviewCount }: RatingSectionProps) {
+export function RatingSection({
+  rating,
+  reviewCount,
+  isLoading,
+}: RatingSectionProps) {
   if (!rating) return null;
 
   return (
-    <View style={styles.ratingSection}>
+    <FlexView centerV gap={0}>
       <View style={styles.starsContainer}>
-        {renderStarIcons(rating)}
+        {isLoading ? (
+          <SkeletonStar starSize={20} />
+        ) : (
+          renderStarIcons2({ rating, starSize: 20 })
+        )}
+        {/* {renderStarIcons2({ rating, starSize: 20 })} */}
       </View>
-      <ThemedText type="dimmed" style={styles.ratingText}>
-        {rating.toFixed(1)} ({reviewCount || 0} reviews)
-      </ThemedText>
-    </View>
+
+      {isLoading ? null : (
+        <ThemedText type="dimmed" style={styles.ratingText}>
+          ({rating.toFixed(1)})
+        </ThemedText>
+      )}
+    </FlexView>
   );
 }
 
 const styles = StyleSheet.create({
-  ratingSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 72,
-    marginBottom: 24,
-  },
   starsContainer: {
     flexDirection: 'row',
-    marginRight: 8,
+    marginRight: 4,
   },
   ratingText: {
     fontSize: 14,
-    marginLeft: 8,
+    marginLeft: 0,
   },
 });
-

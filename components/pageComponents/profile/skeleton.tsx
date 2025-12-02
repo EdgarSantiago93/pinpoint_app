@@ -14,7 +14,7 @@ import {
 } from 'react-native-safe-area-context';
 
 // Skeleton Loader Component
-const SkeletonBox = ({
+export const SkeletonBox = ({
   width,
   height,
   borderRadius = 8,
@@ -182,4 +182,3 @@ export default function ProfileSkeleton() {
     </SafeAreaView>
   );
 }
-
